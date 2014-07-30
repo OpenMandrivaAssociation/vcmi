@@ -14,6 +14,7 @@ Group:		Games/Strategy
 Url:		http://www.vcmi.eu/
 Source0:	http://download.vcmi.eu/%{name}-%{version}.tar.gz
 BuildRequires:	cmake
+BuildRequires:	qmake5
 BuildRequires:	boost-devel
 BuildRequires:	pkgconfig(libavcodec)
 BuildRequires:	pkgconfig(libavformat)
