@@ -1,6 +1,7 @@
 %define _enable_debug_packages %{nil}
 %define debug_package %{nil}
 %define debugcflags %{nil}
+%define Werror_cflags %nil
 
 %define __noautoprov '(.*)\\.so(.*)'
 %define __noautoreq 'libvcmi\\.so(.*)|libminizip\\.so(.*)'
@@ -52,6 +53,7 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 
 %prep
 %setup -q
+sed -i 's!-Werror!!g' AI/FuzzyLite/fuzzylite/CMakeLists.txt
 
 %build
 %cmake \
