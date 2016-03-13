@@ -7,12 +7,12 @@
 
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
-Version:	0.96
-Release:	2
+Version:	0.98
+Release:	1
 License:	GPLv2+
 Group:		Games/Strategy
 Url:		http://www.vcmi.eu/
-Source0:	http://download.vcmi.eu/%{name}-%{version}.tar.gz
+Source0:	https://github.com/vcmi/vcmi/archive/%{version}.tar.gz
 BuildRequires:	cmake
 BuildRequires:	qmake5
 BuildRequires:	boost-devel
@@ -22,10 +22,11 @@ BuildRequires:	pkgconfig(libavutil)
 BuildRequires:	pkgconfig(libswscale)
 BuildRequires:	pkgconfig(Qt5Network)
 BuildRequires:	pkgconfig(Qt5Widgets)
-BuildRequires:	pkgconfig(sdl)
-BuildRequires:	pkgconfig(SDL_image)
-BuildRequires:	pkgconfig(SDL_mixer)
-BuildRequires:	pkgconfig(SDL_ttf)
+BuildRequires:	pkgconfig(sdl2)
+BuildRequires:	pkgconfig(SDL2_image)
+BuildRequires:	pkgconfig(SDL2_mixer)
+BuildRequires:	pkgconfig(SDL2_ttf)
+BuildRequires:	pkgconfig(minizip)
 BuildRequires:	pkgconfig(zlib)
 # For data extraction
 Requires:	unshield
@@ -60,7 +61,7 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 	-DLIB_DIR=%{_lib}/%{name} \
 	-DCMAKE_INSTALL_LIBDIR=%{_lib} \
 	-DCMAKE_SKIP_RPATH=OFF
-make
+%make
 
 %install
 %makeinstall_std -C build
