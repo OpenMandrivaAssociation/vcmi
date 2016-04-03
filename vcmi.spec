@@ -68,3 +68,6 @@ sed -i 's!-Werror!!g' AI/FuzzyLite/fuzzylite/CMakeLists.txt
 %install
 %makeinstall_std -C build
 
+# don't ship headers and static libs
+rm -rf %{buildroot}/%{_includedir}/fl/
+rm -f %{buildroot}/%{_libdir}/libfuzzylite-static.a
