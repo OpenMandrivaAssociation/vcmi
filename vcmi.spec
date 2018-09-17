@@ -15,7 +15,8 @@ Group:		Games/Strategy
 Url:		http://www.vcmi.eu/
 Source0:	https://github.com/vcmi/vcmi/archive/%{version}/%{name}-%{version}.tar.gz
 # Patch to fix build issues with boost. https://github.com/vcmi/vcmi/pull/285#issuecomment-370504722
-Patch1:         %{name}-boost-1.66.patch
+#Patch1:         %{name}-boost-1.66.patch
+Patch1:		vcmi-0.99-boost_compatibility.patch
 BuildRequires:	cmake
 BuildRequires:	qmake5
 BuildRequires:	boost-devel
