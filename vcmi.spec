@@ -8,12 +8,12 @@
 
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
-Version:	0.98
+Version:	0.99
 Release:	1
 License:	GPLv2+
 Group:		Games/Strategy
 Url:		http://www.vcmi.eu/
-Source0:	https://github.com/vcmi/vcmi/archive/%{version}.tar.gz
+Source0:	https://github.com/vcmi/vcmi/archive/%{version}/%{name}-%{version}.tar.gz
 BuildRequires:	cmake
 BuildRequires:	qmake5
 BuildRequires:	boost-devel
