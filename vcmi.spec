@@ -60,7 +60,7 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 %prep
 %setup -q -n %{name}-develop
 %autopatch -p1
-sed -i 's!-Werror!!g' AI/FuzzyLite/fuzzylite/CMakeLists.txt
+#sed -i 's!-Werror!!g' AI/FuzzyLite/fuzzylite/CMakeLists.txt
 
 %build
 %cmake \
