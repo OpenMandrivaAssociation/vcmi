@@ -9,14 +9,17 @@
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
 Version:	0.99
-Release:	1
+Release:	1.0.git.2019.02.03
 License:	GPLv2+
 Group:		Games/Strategy
 Url:		http://www.vcmi.eu/
-Source0:	https://github.com/vcmi/vcmi/archive/%{version}/%{name}-%{version}.tar.gz
+#Source0:	https://github.com/vcmi/vcmi/archive/%{version}/%{name}-%{version}.tar.gz
+#Current stable 0.99 too broken to fix, also too old. 
+#In anticipation of a new stable version, instead old broken stuff, we use latest git.
+Source0: 	%{name}-develop-2019.02.03.zip
 # Patch to fix build issues with boost. https://github.com/vcmi/vcmi/pull/285#issuecomment-370504722
 #Patch1:         %{name}-boost-1.66.patch
-Patch1:		vcmi-0.99-boost_compatibility.patch
+#Patch1:		vcmi-0.99-boost_compatibility.patch
 BuildRequires:	cmake
 BuildRequires:	qmake5
 BuildRequires:	boost-devel
@@ -55,7 +58,7 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 #----------------------------------------------------------------------------
 
 %prep
-%setup -q
+%setup -q -n %{name}-develop
 %autopatch -p1
 sed -i 's!-Werror!!g' AI/FuzzyLite/fuzzylite/CMakeLists.txt
 
@@ -67,10 +70,10 @@ sed -i 's!-Werror!!g' AI/FuzzyLite/fuzzylite/CMakeLists.txt
 	-DLIB_DIR=%{_lib}/%{name} \
 	-DCMAKE_INSTALL_LIBDIR=%{_lib} \
 	-DCMAKE_SKIP_RPATH=OFF
-%make
+%make_build
 
 %install
-%makeinstall_std -C build
+%make_install -C build
 
 # don't ship headers and static libs
 rm -rf %{buildroot}/%{_includedir}/fl/
