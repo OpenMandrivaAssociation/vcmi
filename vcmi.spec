@@ -3,9 +3,6 @@
 %define debugcflags %{nil}
 %define Werror_cflags %nil
 
-%define __noautoprov '(.*)\\.so(.*)'
-%define __noautoreq 'libvcmi\\.so(.*)|libminizip\\.so(.*)'
-
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
 Version:	0.99
