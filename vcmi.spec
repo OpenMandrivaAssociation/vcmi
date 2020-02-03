@@ -9,14 +9,14 @@
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
 Version:	0.99
-Release:	2.0.git.2019.02.04
+Release:	1.0.git.31.01.2020
 License:	GPLv2+
 Group:		Games/Strategy
 Url:		http://www.vcmi.eu/
 #Source0:	https://github.com/vcmi/vcmi/archive/%{version}/%{name}-%{version}.tar.gz
 #Current stable 0.99 too broken to fix, also too old. 
 #In anticipation of a new stable version, instead old broken stuff, we use latest git.
-Source0: 	%{name}-develop-2019.02.04.tar.xz
+Source0: 	%{name}-master-31.01.2020.tar.xz
 # Patch to fix build issues with boost. https://github.com/vcmi/vcmi/pull/285#issuecomment-370504722
 #Patch1:         %{name}-boost-1.66.patch
 #Patch1:		vcmi-0.99-boost_compatibility.patch
@@ -58,7 +58,7 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 #----------------------------------------------------------------------------
 
 %prep
-%setup -q -n %{name}-develop-2019.02.04
+%setup -q -n %{name}-master-31.01.2020
 %autopatch -p1
 #sed -i 's!-Werror!!g' AI/FuzzyLite/fuzzylite/CMakeLists.txt
 
