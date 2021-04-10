@@ -9,17 +9,17 @@
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
 Version:	0.99
-Release:	1.2.git.2020.01.31
+Release:	1.2.git.2021.04.10
 License:	GPLv2+
 Group:		Games/Strategy
 Url:		http://www.vcmi.eu/
 #Source0:	https://github.com/vcmi/vcmi/archive/%{version}/%{name}-%{version}.tar.gz
 #Current stable 0.99 too broken to fix, also too old. 
 #In anticipation of a new stable version, instead old broken stuff, we use latest git.
-Source0: 	%{name}-master-31.01.2020.tar.xz
-# Patch to fix build issues with boost. https://github.com/vcmi/vcmi/pull/285#issuecomment-370504722
-#Patch1:         %{name}-boost-1.66.patch
-#Patch1:		vcmi-0.99-boost_compatibility.patch
+Source0: 	https://github.com/vcmi/vcmi/archive/develop/%{name}-2021.04.10.tar.gz
+# git submodules
+Source1:	https://github.com/fuzzylite/fuzzylite/archive/9751a751a17c0682ed5d02e583c6a0cda8bc88e5.tar.gz
+Source2:	https://github.com/google/googletest/archive/4bab34d2084259cba67f3bfb51217c10d606e175.tar.gz
 BuildRequires:	cmake
 BuildRequires:	qmake5
 BuildRequires:	boost-devel
@@ -59,7 +59,17 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 #----------------------------------------------------------------------------
 
 %prep
-%setup -q -n %{name}-master-31.01.2020
+%setup -q -n %{name}-develop
+cd AI
+rmdir FuzzyLite
+tar xf %{S:1}
+mv fuzzylite-* FuzzyLite
+cd ..
+cd test
+rmdir googletest
+tar xf %{S:2}
+mv googletest-* googletest
+cd ..
 %autopatch -p1
 #sed -i 's!-Werror!!g' AI/FuzzyLite/fuzzylite/CMakeLists.txt
 
