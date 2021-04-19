@@ -14,7 +14,7 @@ License:	GPLv2+
 Group:		Games/Strategy
 Url:		http://www.vcmi.eu/
 #Source0:	https://github.com/vcmi/vcmi/archive/%{version}/%{name}-%{version}.tar.gz
-#Current stable 0.99 too broken to fix, also too old. 
+#Current stable 0.99 too broken to fix, also too old.
 #In anticipation of a new stable version, instead old broken stuff, we use latest git.
 Source0: 	https://github.com/vcmi/vcmi/archive/develop/%{name}-2021.04.10.tar.gz
 # git submodules
@@ -78,8 +78,8 @@ cd ..
 	-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="" \
 	-DBIN_DIR=games \
 	-DDATA_DIR=share/games/%{name} \
-	-DLIB_DIR=%{_lib}/%{name} \
-	-DCMAKE_INSTALL_LIBDIR=%{_lib} \
+	-DLIB_DIR=%{_libdir}/%{name} \
+	-DCMAKE_INSTALL_LIBDIR=%{_libdir}/name \
 	-DCMAKE_SKIP_RPATH=OFF
 %make_build
 
