@@ -52,7 +52,8 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 %doc README.md AUTHORS ChangeLog
 %{_datadir}/applications/%{name}*.desktop
 %{_iconsdir}/hicolor/*/apps/%{name}client.png
-%{_libdir}/%{name}/
+%{_libdir}/*.so
+%{_libdir}/AI/
 %{_gamesbindir}/%{name}*
 %{_gamesdatadir}/%{name}/
 
@@ -78,8 +79,8 @@ cd ..
 	-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="" \
 	-DBIN_DIR=games \
 	-DDATA_DIR=share/games/%{name} \
-	-DLIB_DIR=%{_libdir}/%{name} \
-	-DCMAKE_INSTALL_LIBDIR=%{_libdir}/name \
+	-DLIB_DIR=%{_lib} \
+	-DCMAKE_INSTALL_LIBDIR=%{_libdir} \
 	-DCMAKE_SKIP_RPATH=OFF
 %make_build
 
