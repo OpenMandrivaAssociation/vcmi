@@ -36,6 +36,7 @@ BuildRequires:	pkgconfig(SDL2_ttf)
 BuildRequires:	pkgconfig(minizip)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(icu-uc)
+BuildRequires:	pkgconfig(tbb)
 # For data extraction
 Requires:	unshield
 
