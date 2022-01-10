@@ -37,6 +37,8 @@ BuildRequires:	pkgconfig(minizip)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(icu-uc)
 BuildRequires:	pkgconfig(tbb)
+BuildRequires:	pkgconfig(luajit)
+BuildRequires:	pkgconfig(lua)
 # For data extraction
 Requires:	unshield
 
