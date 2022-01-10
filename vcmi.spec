@@ -1,6 +1,6 @@
-%define _enable_debug_packages %{nil}
-%define debug_package %{nil}
-%define debugcflags %{nil}
+#define _enable_debug_packages %{nil}
+#define debug_package %{nil}
+#define debugcflags %{nil}
 %define Werror_cflags %nil
 
 %define __noautoprov '(.*)\\.so(.*)'
@@ -9,7 +9,7 @@
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
 Version:	0.99
-Release:	1.3.git.2021.04.10
+Release:	1.git.20220104.1
 License:	GPLv2+
 Group:		Games/Strategy
 Url:		http://www.vcmi.eu/
@@ -18,8 +18,8 @@ Url:		http://www.vcmi.eu/
 #In anticipation of a new stable version, instead old broken stuff, we use latest git.
 Source0: 	https://github.com/vcmi/vcmi/archive/develop/%{name}-2021.04.10.tar.gz
 # git submodules
-Source1:	https://github.com/fuzzylite/fuzzylite/archive/9751a751a17c0682ed5d02e583c6a0cda8bc88e5.tar.gz
-Source2:	https://github.com/google/googletest/archive/4bab34d2084259cba67f3bfb51217c10d606e175.tar.gz
+#Source1:	https://github.com/fuzzylite/fuzzylite/archive/9751a751a17c0682ed5d02e583c6a0cda8bc88e5.tar.gz
+#Source2:	https://github.com/google/googletest/archive/4bab34d2084259cba67f3bfb51217c10d606e175.tar.gz
 BuildRequires:	cmake
 BuildRequires:	qmake5
 BuildRequires:	boost-devel
@@ -60,17 +60,17 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 #----------------------------------------------------------------------------
 
 %prep
-%setup -q -n %{name}-develop
-cd AI
-rmdir FuzzyLite
-tar xf %{S:1}
-mv fuzzylite-* FuzzyLite
-cd ..
-cd test
-rmdir googletest
-tar xf %{S:2}
-mv googletest-* googletest
-cd ..
+%setup -q -n %{name}-%{version}
+#cd AI
+#rmdir FuzzyLite
+#tar xf %{S:1}
+#mv fuzzylite-* FuzzyLite
+#cd ..
+#cd test
+#rmdir googletest
+#tar xf %{S:2}
+#mv googletest-* googletest
+#cd ..
 %autopatch -p1
 #sed -i 's!-Werror!!g' AI/FuzzyLite/fuzzylite/CMakeLists.txt
 
