@@ -57,8 +57,11 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 %{_iconsdir}/hicolor/*/apps/%{name}client.png
 %{_libdir}/*.so
 %{_libdir}/AI/
+%{_libdir}/scripting/libvcmiERM.so
+%{_libdir}/scripting/libvcmiLua.so
 %{_gamesbindir}/%{name}*
 %{_gamesdatadir}/%{name}/
+%{_gamesdatadir}/metainfo/eu.vcmi.VCMI.metainfo.xml
 
 #----------------------------------------------------------------------------
 
