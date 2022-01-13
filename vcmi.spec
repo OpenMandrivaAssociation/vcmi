@@ -37,6 +37,7 @@ BuildRequires:	pkgconfig(minizip)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(icu-uc)
 BuildRequires:	pkgconfig(tbb)
+# Lua or Luajit. Pick one. Currently only luajit compiles with VCMI.
 BuildRequires:	pkgconfig(luajit)
 #BuildRequires:	pkgconfig(lua)
 # For data extraction
@@ -61,7 +62,7 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 %{_libdir}/scripting/libvcmiLua.so
 %{_gamesbindir}/%{name}*
 %{_gamesdatadir}/%{name}/
-%{_gamesdatadir}/metainfo/eu.vcmi.VCMI.metainfo.xml
+%{_datadir}/metainfo/eu.vcmi.VCMI.metainfo.xml
 
 #----------------------------------------------------------------------------
 
