@@ -23,10 +23,11 @@ Source0:	https://github.com/vcmi/vcmi/archive/%{version}/%{name}-%{version}.tar.
 BuildRequires:	cmake
 BuildRequires:	qmake5
 BuildRequires:	boost-devel
-BuildRequires:	pkgconfig(libavcodec)
-BuildRequires:	pkgconfig(libavformat)
-BuildRequires:	pkgconfig(libavutil)
-BuildRequires:	pkgconfig(libswscale)
+#BuildRequires:	pkgconfig(libavcodec)
+#BuildRequires:	pkgconfig(libavformat)
+#BuildRequires:	pkgconfig(libavutil)
+#BuildRequires:	pkgconfig(libswscale)
+BuildRequires:	ffmpeg4-devel
 BuildRequires:	pkgconfig(Qt5Network)
 BuildRequires:	pkgconfig(Qt5Widgets)
 BuildRequires:	pkgconfig(sdl2)
