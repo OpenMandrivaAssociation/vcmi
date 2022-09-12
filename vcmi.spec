@@ -8,15 +8,16 @@
 
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
-Version:	0.99
-Release:	3.git.20220826.1
+Version:	1.0.0
+Release:	1
 License:	GPLv2+
 Group:		Games/Strategy
 Url:		http://www.vcmi.eu/
 #Source0:	https://github.com/vcmi/vcmi/archive/%{version}/%{name}-%{version}.tar.gz
 #Current stable 0.99 too broken to fix, also too old.
 #In anticipation of a new stable version, instead old broken stuff, we use latest git.
-Source0: 	https://github.com/vcmi/vcmi/archive/develop/%{name}-2022.08.26.tar.gz
+#Source0: 	https://github.com/vcmi/vcmi/archive/develop/%{name}-2022.08.26.tar.gz
+Source0:	https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{version}.tar.gz
 # git submodules
 Source1:	https://github.com/fuzzylite/fuzzylite/archive/9751a751a17c0682ed5d02e583c6a0cda8bc88e5.tar.gz
 Source2:	https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.tar.gz
@@ -68,7 +69,7 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 #----------------------------------------------------------------------------
 
 %prep
-%setup -q -n %{name}-develop
+%setup -q -n %{name}-%{version}
 cd AI
 rmdir FuzzyLite
 tar xf %{S:1}
