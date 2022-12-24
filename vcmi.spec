@@ -8,8 +8,8 @@
 
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
-Version:	1.0.0
-Release:	2
+Version:	1.1.0
+Release:	1
 License:	GPLv2+
 Group:		Games/Strategy
 Url:		http://www.vcmi.eu/
@@ -58,10 +58,11 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 %doc README.md AUTHORS ChangeLog
 %{_datadir}/applications/%{name}*.desktop
 %{_iconsdir}/hicolor/*/apps/%{name}client.png
+%{_iconsdir}/hicolor/*x*/apps/vcmieditor.png
 %{_libdir}/*.so
 %{_libdir}/AI/
-%{_libdir}/scripting/libvcmiERM.so
-%{_libdir}/scripting/libvcmiLua.so
+#{_libdir}/scripting/libvcmiERM.so
+#{_libdir}/scripting/libvcmiLua.so
 %{_gamesbindir}/%{name}*
 %{_gamesdatadir}/%{name}/
 %{_datadir}/metainfo/eu.vcmi.VCMI.metainfo.xml
