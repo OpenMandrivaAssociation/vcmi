@@ -9,28 +9,29 @@
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
 Version:	1.2.1
-Release:	2
+Release:	3
 License:	GPLv2+
 Group:		Games/Strategy
 Url:		http://www.vcmi.eu/
-#Source0:	https://github.com/vcmi/vcmi/archive/%{version}/%{name}-%{version}.tar.gz
-#Current stable 0.99 too broken to fix, also too old.
-#In anticipation of a new stable version, instead old broken stuff, we use latest git.
-#Source0: 	https://github.com/vcmi/vcmi/archive/develop/%{name}-2022.08.26.tar.gz
 Source0:	https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{version}.tar.gz
 # git submodules
 Source1:	https://github.com/fuzzylite/fuzzylite/archive/9751a751a17c0682ed5d02e583c6a0cda8bc88e5.tar.gz
 Source2:	https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.tar.gz
 BuildRequires:	cmake
-BuildRequires:	qmake5
+BuildRequires:	cmake(Qt6)
+BuildRequires:	qmake-qt6
 BuildRequires:	boost-devel
 BuildRequires:	pkgconfig(libavcodec)
 BuildRequires:	pkgconfig(libavformat)
 BuildRequires:	pkgconfig(libavutil)
 BuildRequires:	pkgconfig(libswscale)
-BuildRequires:	cmake(Qt5LinguistTools)
-BuildRequires:	pkgconfig(Qt5Network)
-BuildRequires:	pkgconfig(Qt5Widgets)
+BuildRequires: 	qt6-qttools-linguist
+BuildRequires: 	cmake(Qt5LinguistTools)
+BuildRequires:	cmake(Qt6DBus)
+BuildRequires: 	cmake(Qt6Core)
+BuildRequires: 	cmake(Qt6Gui)
+BuildRequires:	cmake(Qt6Network)
+BuildRequires:	cmake(Qt6Widgets)
 BuildRequires:	pkgconfig(sdl2)
 BuildRequires:	pkgconfig(SDL2_image)
 BuildRequires:	pkgconfig(SDL2_mixer)
@@ -42,6 +43,10 @@ BuildRequires:	pkgconfig(tbb)
 # Lua or Luajit. Pick one. Currently only luajit compiles with VCMI.
 BuildRequires:	pkgconfig(luajit)
 #BuildRequires:	pkgconfig(lua)
+BuildRequires:	cmake(VulkanHeaders)
+BuildRequires:  pkgconfig(vulkan)
+BuildRequires:	pkgconfig(xkbcommon-x11)
+BuildRequires:	pkgconfig(xkbcommon)
 # For data extraction
 Requires:	unshield
 Requires:	innoextract
@@ -62,10 +67,8 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 %{_iconsdir}/hicolor/*x*/apps/vcmieditor.png
 %{_libdir}/*.so
 %{_libdir}/AI/
-#{_libdir}/scripting/libvcmiERM.so
-#{_libdir}/scripting/libvcmiLua.so
-%{_gamesbindir}/%{name}*
-%{_gamesdatadir}/%{name}/
+%{_bindir}/%{name}*
+%{_datadir}/%{name}/
 %{_datadir}/metainfo/eu.vcmi.VCMI.metainfo.xml
 
 #----------------------------------------------------------------------------
@@ -88,8 +91,6 @@ cd ..
 %build
 %cmake \
 	-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="" \
-	-DBIN_DIR=games \
-	-DDATA_DIR=share/games/%{name} \
 	-DLIB_DIR=%{_lib} \
 	-DCMAKE_INSTALL_LIBDIR=%{_libdir} \
 	-DCMAKE_SKIP_RPATH=OFF
