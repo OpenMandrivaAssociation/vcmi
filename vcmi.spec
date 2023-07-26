@@ -31,8 +31,11 @@ BuildRequires:	pkgconfig(libavutil)
 BuildRequires:	pkgconfig(libswscale)
 BuildRequires: 	qt6-qttools-linguist
 BuildRequires: 	cmake(Qt5LinguistTools)
-BuildRequires:	pkgconfig(Qt6Network)
-BuildRequires:	pkgconfig(Qt6Widgets)
+BuildRequires:	cmake(Qt6DBus)
+BuildRequires: 	cmake(Qt6Core)
+BuildRequires: 	cmake(Qt6Gui)
+BuildRequires:	cmake(Qt6Network)
+BuildRequires:	cmake(Qt6Widgets)
 BuildRequires:	pkgconfig(sdl2)
 BuildRequires:	pkgconfig(SDL2_image)
 BuildRequires:	pkgconfig(SDL2_mixer)
@@ -44,6 +47,10 @@ BuildRequires:	pkgconfig(tbb)
 # Lua or Luajit. Pick one. Currently only luajit compiles with VCMI.
 BuildRequires:	pkgconfig(luajit)
 #BuildRequires:	pkgconfig(lua)
+BuildRequires:	cmake(VulkanHeaders)
+BuildRequires:  pkgconfig(vulkan)
+BuildRequires:	pkgconfig(xkbcommon-x11)
+BuildRequires:	pkgconfig(xkbcommon)
 # For data extraction
 Requires:	unshield
 Requires:	innoextract
