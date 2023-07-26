@@ -9,7 +9,7 @@
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
 Version:	1.2.1
-Release:	2
+Release:	3
 License:	GPLv2+
 Group:		Games/Strategy
 Url:		http://www.vcmi.eu/
@@ -22,15 +22,17 @@ Source0:	https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{ver
 Source1:	https://github.com/fuzzylite/fuzzylite/archive/9751a751a17c0682ed5d02e583c6a0cda8bc88e5.tar.gz
 Source2:	https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.tar.gz
 BuildRequires:	cmake
-BuildRequires:	qmake5
+BuildRequires:	cmake(Qt6)
+BuildRequires:	qmake-qt6
 BuildRequires:	boost-devel
 BuildRequires:	pkgconfig(libavcodec)
 BuildRequires:	pkgconfig(libavformat)
 BuildRequires:	pkgconfig(libavutil)
 BuildRequires:	pkgconfig(libswscale)
-BuildRequires:	cmake(Qt5LinguistTools)
-BuildRequires:	pkgconfig(Qt5Network)
-BuildRequires:	pkgconfig(Qt5Widgets)
+BuildRequires: 	qt6-qttools-linguist
+BuildRequires: 	cmake(Qt5LinguistTools)
+BuildRequires:	pkgconfig(Qt6Network)
+BuildRequires:	pkgconfig(Qt6Widgets)
 BuildRequires:	pkgconfig(sdl2)
 BuildRequires:	pkgconfig(SDL2_image)
 BuildRequires:	pkgconfig(SDL2_mixer)
@@ -88,8 +90,6 @@ cd ..
 %build
 %cmake \
 	-DCMAKE_CXX_FLAGS_RELWITHDEBINFO="" \
-	-DBIN_DIR=games \
-	-DDATA_DIR=share/games/%{name} \
 	-DLIB_DIR=%{_lib} \
 	-DCMAKE_INSTALL_LIBDIR=%{_libdir} \
 	-DCMAKE_SKIP_RPATH=OFF
