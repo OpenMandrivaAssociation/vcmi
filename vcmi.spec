@@ -65,6 +65,7 @@ http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 %{_datadir}/applications/%{name}*.desktop
 %{_iconsdir}/hicolor/*/apps/%{name}client.png
 %{_iconsdir}/hicolor/*x*/apps/vcmieditor.png
+%{_iconsdir}/hicolor/scalable/apps/vcmiclient.svg
 %{_libdir}/*.so
 %{_libdir}/AI/
 %{_bindir}/%{name}*
