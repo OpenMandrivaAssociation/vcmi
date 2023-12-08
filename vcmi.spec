@@ -61,7 +61,6 @@ See VCMI's wiki for Heroes III installation instructions:
 http://wiki.vcmi.eu/index.php?title=Installation_on_Linux
 
 %files
-%doc AUTHORS
 %{_datadir}/applications/%{name}*.desktop
 %{_iconsdir}/hicolor/*/apps/%{name}client.png
 %{_iconsdir}/hicolor/*x*/apps/vcmieditor.png
