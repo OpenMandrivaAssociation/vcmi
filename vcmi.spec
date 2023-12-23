@@ -27,7 +27,7 @@ BuildRequires:	pkgconfig(libavutil)
 BuildRequires:	pkgconfig(libswscale)
 BuildRequires: 	qt6-qttools-linguist
 BuildRequires:	qt6-qtbase-theme-gtk3
-BuildRequires: 	cmake(Qt5LinguistTools)
+BuildRequires:  cmake(Qt6LinguistTools)
 BuildRequires:	cmake(Qt6DBus)
 BuildRequires: 	cmake(Qt6Core)
 BuildRequires: 	cmake(Qt6Gui)
