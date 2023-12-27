@@ -25,6 +25,7 @@ BuildRequires:	pkgconfig(libavcodec)
 BuildRequires:	pkgconfig(libavformat)
 BuildRequires:	pkgconfig(libavutil)
 BuildRequires:	pkgconfig(libswscale)
+BuildRequires:	lib64Qt6*
 BuildRequires:	qt6-qttools
 BuildRequires: 	qt6-qttools-linguist
 BuildRequires:	qt6-qtbase-theme-gtk3
