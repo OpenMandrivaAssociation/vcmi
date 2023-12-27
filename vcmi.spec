@@ -18,6 +18,7 @@ Source0:	https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{ver
 Source1:	https://github.com/fuzzylite/fuzzylite/archive/9751a751a17c0682ed5d02e583c6a0cda8bc88e5.tar.gz
 Source2:	https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.tar.gz
 BuildRequires:	cmake
+BuildRequires:	qmake5
 #BuildRequires:	cmake(Qt6)
 #BuildRequires:	qmake-qt6
 BuildRequires:	boost-devel
