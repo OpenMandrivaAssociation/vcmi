@@ -1,0 +1,885 @@
+From d8c4d3654f4eabbfda29d15f253dd8963fcad287 Mon Sep 17 00:00:00 2001
+From: gigas002 <gigas002@pm.me>
+Date: Wed, 5 Jun 2024 04:52:17 +0000
+Subject: [PATCH 1/7] Embed translations and icons for mapeditor
+
+---
+ mapeditor/CMakeLists.txt | 108 ++++++++++++++++++++++-----------------
+ mapeditor/mainwindow.cpp |  10 ++--
+ mapeditor/mainwindow.ui  | 108 ---------------------------------------
+ mapeditor/resources.qrc  |  45 ++++++++++++++++
+ mapeditor/validator.cpp  |   2 +-
+ 5 files changed, 112 insertions(+), 161 deletions(-)
+ create mode 100644 mapeditor/resources.qrc
+
+diff --git a/mapeditor/CMakeLists.txt b/mapeditor/CMakeLists.txt
+index b818e1dc1b..d4b9ddae1c 100644
+--- a/mapeditor/CMakeLists.txt
++++ b/mapeditor/CMakeLists.txt
+@@ -107,24 +107,59 @@ set(editor_FORMS
+ 		inspector/portraitwidget.ui
+ )
+ 
++set(editor_RESOURCES
++	resources.qrc
++)
++
++set(translationsDir "translation")
+ set(editor_TS
+-	translation/chinese.ts
+-	translation/czech.ts
+-	translation/english.ts
+-	translation/french.ts
+-	translation/german.ts
+-	translation/polish.ts
+-	translation/portuguese.ts
+-	translation/russian.ts
+-	translation/spanish.ts
+-	translation/ukrainian.ts
+-	translation/vietnamese.ts
++	"${translationsDir}/chinese.ts"
++	"${translationsDir}/czech.ts"
++	"${translationsDir}/english.ts"
++	"${translationsDir}/french.ts"
++	"${translationsDir}/german.ts"
++	"${translationsDir}/polish.ts"
++	"${translationsDir}/portuguese.ts"
++	"${translationsDir}/russian.ts"
++	"${translationsDir}/spanish.ts"
++	"${translationsDir}/ukrainian.ts"
++	"${translationsDir}/vietnamese.ts"
+ )
++if(ENABLE_TRANSLATIONS)
++	if(TARGET Qt5::Core)
++		set_source_files_properties(${editor_TS} PROPERTIES OUTPUT_LOCATION translation)
++		qt5_add_translation(editor_QM ${editor_TS})
++
++		set(translationsResource "${CMAKE_CURRENT_BINARY_DIR}/translations.qrc")
++		list(APPEND editor_RESOURCES "${translationsResource}")
++
++		set(rccQmFiles "")
++		foreach(qmFile ${editor_QM})
++			string(APPEND rccQmFiles "<file>${qmFile}</file>\n")
++		endforeach()
++		file(WRITE "${translationsResource}"
++"<!DOCTYPE RCC>
++<RCC version=\"1.0\">
++<qresource prefix=\"/\">
++${rccQmFiles}
++</qresource>
++</RCC>"
++		)
++	endif()
++endif()
++
++if(WIN32)
++	set(editor_ICON mapeditor.rc)
++endif()
+ 
+-assign_source_group(${editor_SRCS} ${editor_HEADERS} mapeditor.rc)
++assign_source_group(${editor_SRCS} ${editor_HEADERS} ${editor_RESOURCES} ${editor_TS} ${editor_ICON})
+ 
+-# Tell CMake to run moc when necessary:
++# TODO: enabling AUTORCC breaks msvc build on CI
+ set(CMAKE_AUTOMOC ON)
++set(CMAKE_AUTOUIC ON)
++if(NOT (MSVC AND "$ENV{GITHUB_ACTIONS}" STREQUAL true))
++	set(CMAKE_AUTORCC ON)
++endif()
+ 
+ if(POLICY CMP0071)
+ 	cmake_policy(SET CMP0071 NEW)
+@@ -134,33 +169,28 @@ endif()
+ # to always look for includes there:
+ set(CMAKE_INCLUDE_CURRENT_DIR ON)
+ 
+-if(TARGET Qt6::Core)
+-	qt_wrap_ui(editor_UI_HEADERS ${editor_FORMS})
++if(ENABLE_SINGLE_APP_BUILD OR ANDROID)
++	add_library(vcmieditor OBJECT ${editor_QM})
+ else()
+-	qt5_wrap_ui(editor_UI_HEADERS ${editor_FORMS})
+-	if(ENABLE_TRANSLATIONS)
+-		set_source_files_properties(${editor_TS} PROPERTIES OUTPUT_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/translation)
+-		qt5_add_translation( editor_QM ${editor_TS} )
+-	endif()
++	add_executable(vcmieditor WIN32 ${editor_QM} ${editor_SRCS} ${editor_HEADERS} ${editor_UI_HEADERS} ${editor_ICON})
+ endif()
+ 
+-if(WIN32)
+-	set(editor_ICON mapeditor.rc)
+-endif()
+-
+-add_executable(vcmieditor WIN32 ${editor_QM} ${editor_SRCS} ${editor_HEADERS} ${editor_UI_HEADERS} ${editor_ICON})
+-
+-if(TARGET Qt6::Core)
+-	if(ENABLE_TRANSLATIONS)
+-		set_source_files_properties(${editor_TS} PROPERTIES OUTPUT_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/translation)
++if(ENABLE_TRANSLATIONS)
++	if(TARGET Qt6::Core)
+ 		qt_add_translations(vcmieditor
+ 			TS_FILES ${editor_TS}
+-			QM_FILES_OUTPUT_VARIABLE editor_QM
++			RESOURCE_PREFIX "/${translationsDir}"
+ 			INCLUDE_DIRECTORIES
+ 				${CMAKE_CURRENT_BINARY_DIR})
+ 	endif()
+ endif()
+ 
++target_sources(vcmieditor PRIVATE
++	${editor_SRCS}
++	${editor_HEADERS}
++	${editor_RESOURCES}
++)
++
+ if(WIN32)
+ 	set_target_properties(vcmieditor
+ 		PROPERTIES
+@@ -189,23 +219,9 @@ target_include_directories(vcmieditor
+ vcmi_set_output_dir(vcmieditor "")
+ enable_pch(vcmieditor)
+ 
+-# Copy to build directory for easier debugging
+-add_custom_command(TARGET vcmieditor POST_BUILD
+-	COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/bin/${CMAKE_CFG_INTDIR}/mapeditor/
+-	COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/cmake_modules/create_link.cmake ${CMAKE_SOURCE_DIR}/mapeditor/icons ${CMAKE_BINARY_DIR}/bin/${CMAKE_CFG_INTDIR}/mapeditor/icons
+-	COMMAND ${CMAKE_COMMAND} -P ${CMAKE_SOURCE_DIR}/cmake_modules/create_link.cmake ${CMAKE_CURRENT_BINARY_DIR}/translation ${CMAKE_BINARY_DIR}/bin/${CMAKE_CFG_INTDIR}/mapeditor/translation
+-)
+-
+ install(TARGETS vcmieditor DESTINATION ${BIN_DIR})
+-# copy whole directory
+-install(DIRECTORY icons DESTINATION ${DATA_DIR}/mapeditor)
+-install(FILES ${editor_QM} DESTINATION ${DATA_DIR}/mapeditor/translation)
+-# Install icons and desktop file on Linux
++
++# Install desktop file on Linux
+ if(NOT WIN32 AND NOT APPLE)
+ 	install(FILES "vcmieditor.desktop" DESTINATION share/applications)
+-	install(FILES "icons/mapeditor.32x32.png"   DESTINATION share/icons/hicolor/32x32/apps RENAME vcmieditor.png)
+-	install(FILES "icons/mapeditor.48x48.png"   DESTINATION share/icons/hicolor/48x48/apps RENAME vcmieditor.png)
+-	install(FILES "icons/mapeditor.64x64.png"   DESTINATION share/icons/hicolor/64x64/apps RENAME vcmieditor.png)
+-	install(FILES "icons/mapeditor.128x128.png" DESTINATION share/icons/hicolor/128x128/apps RENAME vcmieditor.png)
+-	install(FILES "icons/mapeditor.256x256.png" DESTINATION share/icons/hicolor/256x256/apps RENAME vcmieditor.png)
+ endif()
+diff --git a/mapeditor/mainwindow.cpp b/mapeditor/mainwindow.cpp
+index f0a699680d..7edd3cd9a9 100644
+--- a/mapeditor/mainwindow.cpp
++++ b/mapeditor/mainwindow.cpp
+@@ -163,13 +163,9 @@ MainWindow::MainWindow(QWidget* parent) :
+ 	// Set current working dir to executable folder.
+ 	// This is important on Mac for relative paths to work inside DMG.
+ 	QDir::setCurrent(QApplication::applicationDirPath());
+-	
+-	for(auto & string : VCMIDirs::get().dataPaths())
+-		QDir::addSearchPath("icons", pathToQString(string / "mapeditor" / "icons"));
+-	QDir::addSearchPath("icons", pathToQString(VCMIDirs::get().userDataPath() / "mapeditor" / "icons"));
+-	
++
+ 	new QShortcut(QKeySequence("Backspace"), this, SLOT(on_actionErase_triggered()));
+-	
++
+ 	ExtractionOptions extractionOptions;
+ 	parseCommandLine(extractionOptions);
+ 
+@@ -206,6 +202,8 @@ MainWindow::MainWindow(QWidget* parent) :
+ 	loadTranslation();
+ 
+ 	ui->setupUi(this);
++	setWindowIcon(QIcon{":/icons/menu-game.png"});
++
+ 	loadUserSettings(); //For example window size
+ 	setTitle();
+ 
+diff --git a/mapeditor/mainwindow.ui b/mapeditor/mainwindow.ui
+index bedb9c465e..03a2d32d8f 100644
+--- a/mapeditor/mainwindow.ui
++++ b/mapeditor/mainwindow.ui
+@@ -511,10 +511,6 @@
+          <property name="text">
+           <string/>
+          </property>
+-         <property name="icon">
+-          <iconset>
+-           <normaloff>icons:brush-1.png</normaloff>icons:brush-1.png</iconset>
+-         </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+@@ -558,10 +554,6 @@
+          <property name="text">
+           <string/>
+          </property>
+-         <property name="icon">
+-          <iconset>
+-           <normaloff>icons:brush-2.png</normaloff>icons:brush-2.png</iconset>
+-         </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+@@ -605,10 +597,6 @@
+          <property name="text">
+           <string/>
+          </property>
+-         <property name="icon">
+-          <iconset>
+-           <normaloff>icons:brush-4.png</normaloff>icons:brush-4.png</iconset>
+-         </property>
+          <property name="iconSize">
+           <size>
+            <width>16</width>
+@@ -652,10 +640,6 @@
+          <property name="text">
+           <string/>
+          </property>
+-         <property name="icon">
+-          <iconset>
+-           <normaloff>icons:brush-3.png</normaloff>icons:brush-3.png</iconset>
+-         </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+@@ -697,10 +681,6 @@
+          <property name="text">
+           <string/>
+          </property>
+-         <property name="icon">
+-          <iconset>
+-           <normaloff>icons:brush-7.png</normaloff>icons:brush-7.png</iconset>
+-         </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+@@ -732,10 +712,6 @@
+          <property name="text">
+           <string/>
+          </property>
+-         <property name="icon">
+-          <iconset>
+-           <normaloff>icons:brush-5.png</normaloff>icons:brush-5.png</iconset>
+-         </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+@@ -770,10 +746,6 @@
+          <property name="text">
+           <string/>
+          </property>
+-         <property name="icon">
+-          <iconset>
+-           <normaloff>icons:brush-6.png</normaloff>icons:brush-6.png</iconset>
+-         </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+@@ -808,10 +780,6 @@
+          <property name="text">
+           <string/>
+          </property>
+-         <property name="icon">
+-          <iconset>
+-           <normaloff>icons:brush-0.png</normaloff>icons:brush-0.png</iconset>
+-         </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+@@ -1044,10 +1012,6 @@
+    </widget>
+   </widget>
+   <action name="actionOpen">
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:document-open.png</normaloff>icons:document-open.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Open</string>
+    </property>
+@@ -1056,10 +1020,6 @@
+    </property>
+   </action>
+   <action name="actionSave">
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:document-save.png</normaloff>icons:document-save.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Save</string>
+    </property>
+@@ -1068,10 +1028,6 @@
+    </property>
+   </action>
+   <action name="actionNew">
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:document-new.png</normaloff>icons:document-new.png</iconset>
+-   </property>
+    <property name="text">
+     <string>New</string>
+    </property>
+@@ -1088,10 +1044,6 @@
+    </property>
+   </action>
+   <action name="actionLevel">
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:toggle-underground.png</normaloff>icons:toggle-underground.png</iconset>
+-   </property>
+    <property name="text">
+     <string>U/G</string>
+    </property>
+@@ -1106,10 +1058,6 @@
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:toggle-pass.png</normaloff>icons:toggle-pass.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Pass</string>
+    </property>
+@@ -1118,10 +1066,6 @@
+    </property>
+   </action>
+   <action name="actionCut">
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:edit-cut.png</normaloff>icons:edit-cut.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Cut</string>
+    </property>
+@@ -1130,10 +1074,6 @@
+    </property>
+   </action>
+   <action name="actionCopy">
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:edit-copy.png</normaloff>icons:edit-copy.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Copy</string>
+    </property>
+@@ -1142,10 +1082,6 @@
+    </property>
+   </action>
+   <action name="actionPaste">
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:edit-paste.png</normaloff>icons:edit-paste.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Paste</string>
+    </property>
+@@ -1154,10 +1090,6 @@
+    </property>
+   </action>
+   <action name="actionFill">
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:fill-obstacles.png</normaloff>icons:fill-obstacles.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Fill</string>
+    </property>
+@@ -1172,10 +1104,6 @@
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:toggle-grid.png</normaloff>icons:toggle-grid.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Grid</string>
+    </property>
+@@ -1212,10 +1140,6 @@
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:edit-undo.png</normaloff>icons:edit-undo.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Undo</string>
+    </property>
+@@ -1233,10 +1157,6 @@
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:edit-redo.png</normaloff>icons:edit-redo.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Redo</string>
+    </property>
+@@ -1251,10 +1171,6 @@
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:edit-clear.png</normaloff>icons:edit-clear.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Erase</string>
+    </property>
+@@ -1400,10 +1316,6 @@
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:translations.png</normaloff>icons:translations.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Translations</string>
+    </property>
+@@ -1420,10 +1332,6 @@
+    </property>
+   </action>
+   <action name="actionLock">
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:lock-closed.png</normaloff>icons:lock-closed.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Lock</string>
+    </property>
+@@ -1435,10 +1343,6 @@
+    </property>
+   </action>
+   <action name="actionUnlock">
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:lock-open.png</normaloff>icons:lock-open.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Unlock</string>
+    </property>
+@@ -1450,10 +1354,6 @@
+    </property>
+   </action>
+   <action name="actionZoom_in">
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:zoom_plus.png</normaloff>icons:zoom_plus.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Zoom in</string>
+    </property>
+@@ -1462,10 +1362,6 @@
+    </property>
+   </action>
+   <action name="actionZoom_out">
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:zoom_minus.png</normaloff>icons:zoom_minus.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Zoom out</string>
+    </property>
+@@ -1474,10 +1370,6 @@
+    </property>
+   </action>
+   <action name="actionZoom_reset">
+-   <property name="icon">
+-    <iconset>
+-     <normaloff>icons:zoom_zero.png</normaloff>icons:zoom_zero.png</iconset>
+-   </property>
+    <property name="text">
+     <string>Zoom reset</string>
+    </property>
+diff --git a/mapeditor/resources.qrc b/mapeditor/resources.qrc
+new file mode 100644
+index 0000000000..6542499685
+--- /dev/null
++++ b/mapeditor/resources.qrc
+@@ -0,0 +1,45 @@
++<RCC>
++    <qresource prefix="/">
++        <file>icons/toggle-grid.png</file>
++        <file>icons/lock-open.png</file>
++        <file>icons/brush-3.png</file>
++        <file>icons/mod-download.png</file>
++        <file>icons/toggle-pass.png</file>
++        <file>icons/mapeditor.256x256.png</file>
++        <file>icons/mapeditor.64x64.png</file>
++        <file>icons/edit-clear.png</file>
++        <file>icons/document-open.png</file>
++        <file>icons/brush-5.png</file>
++        <file>icons/document-new.png</file>
++        <file>icons/mapeditor.128x128.png</file>
++        <file>icons/lock-closed.png</file>
++        <file>icons/toggle-underground.png</file>
++        <file>icons/zoom_zero.png</file>
++        <file>icons/brush-1.png</file>
++        <file>icons/edit-redo.png</file>
++        <file>icons/edit-copy.png</file>
++        <file>icons/edit-undo.png</file>
++        <file>icons/mapeditor.32x32.png</file>
++        <file>icons/brush-6.png</file>
++        <file>icons/edit-cut.png</file>
++        <file>icons/menu-settings.png</file>
++        <file>icons/fill-obstacles.png</file>
++        <file>icons/mod-delete.png</file>
++        <file>icons/mod-enabled.png</file>
++        <file>icons/mod-disabled.png</file>
++        <file>icons/menu-game.png</file>
++        <file>icons/mod-update.png</file>
++        <file>icons/brush-7.png</file>
++        <file>icons/zoom_minus.png</file>
++        <file>icons/zoom_base.png</file>
++        <file>icons/menu-mods.png</file>
++        <file>icons/edit-paste.png</file>
++        <file>icons/translations.png</file>
++        <file>icons/zoom_plus.png</file>
++        <file>icons/brush-4.png</file>
++        <file>icons/mapeditor.48x48.png</file>
++        <file>icons/document-save.png</file>
++        <file>icons/brush-2.png</file>
++        <file>icons/brush-0.png</file>
++    </qresource>
++</RCC>
+diff --git a/mapeditor/validator.cpp b/mapeditor/validator.cpp
+index 8ec6f51ef9..a70e0cd909 100644
+--- a/mapeditor/validator.cpp
++++ b/mapeditor/validator.cpp
+@@ -29,7 +29,7 @@ Validator::Validator(const CMap * map, QWidget *parent) :
+ 	
+ 	setAttribute(Qt::WA_DeleteOnClose);
+ 
+-	std::array<QString, 2> icons{"mapeditor/icons/mod-update.png", "mapeditor/icons/mod-delete.png"};
++	std::array<QString, 2> icons{":/icons/mod-update.png", ":/icons/mod-delete.png"};
+ 
+ 	for(auto & issue : Validator::validate(map))
+ 	{
+
+From 1bc1755cf67494673bd4f235fdf41c01d0d45a58 Mon Sep 17 00:00:00 2001
+From: gigas002 <gigas002@pm.me>
+Date: Wed, 5 Jun 2024 08:19:12 +0000
+Subject: [PATCH 2/7] Install icons on linux in loop
+
+---
+ mapeditor/CMakeLists.txt | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/mapeditor/CMakeLists.txt b/mapeditor/CMakeLists.txt
+index d4b9ddae1c..e405c030f3 100644
+--- a/mapeditor/CMakeLists.txt
++++ b/mapeditor/CMakeLists.txt
+@@ -221,7 +221,13 @@ enable_pch(vcmieditor)
+ 
+ install(TARGETS vcmieditor DESTINATION ${BIN_DIR})
+ 
+-# Install desktop file on Linux
++# Install icons and desktop file on Linux
+ if(NOT WIN32 AND NOT APPLE)
++	foreach(iconSize 32 48 64 128 256)
++		install(FILES "icons/mapeditor.${iconSize}x${iconSize}.png"
++			DESTINATION "share/icons/hicolor/${iconSize}x${iconSize}/apps"
++			RENAME mapeditor.png
++		)
++	endforeach()
+ 	install(FILES "vcmieditor.desktop" DESTINATION share/applications)
+ endif()
+
+From de3dc929ac67e5d83ef24b7d8736e80ca0d0bd0e Mon Sep 17 00:00:00 2001
+From: gigas002 <gigas002@pm.me>
+Date: Wed, 5 Jun 2024 08:56:35 +0000
+Subject: [PATCH 3/7] Add missing icons to mapeditor
+
+---
+ mapeditor/mainwindow.cpp | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/mapeditor/mainwindow.cpp b/mapeditor/mainwindow.cpp
+index 7edd3cd9a9..8b9bb8f533 100644
+--- a/mapeditor/mainwindow.cpp
++++ b/mapeditor/mainwindow.cpp
+@@ -202,7 +202,34 @@ MainWindow::MainWindow(QWidget* parent) :
+ 	loadTranslation();
+ 
+ 	ui->setupUi(this);
++
+ 	setWindowIcon(QIcon{":/icons/menu-game.png"});
++	ui->toolBrush->setIcon(QIcon{":/icons/brush-1.png"});
++	ui->toolBrush2->setIcon(QIcon{":/icons/brush-2.png"});
++	ui->toolBrush4->setIcon(QIcon{":/icons/brush-4.png"});
++	ui->toolLasso->setIcon(QIcon{":/icons/brush-3.png"});
++	ui->toolLine->setIcon(QIcon{":/icons/brush-7.png"});
++	ui->toolArea->setIcon(QIcon{":/icons/brush-5.png"});
++	ui->toolFill->setIcon(QIcon{":/icons/brush-6.png"});
++	ui->actionOpen->setIcon(QIcon{":/icons/document-open.png"});
++	ui->actionSave->setIcon(QIcon{":/icons/document-save.png"});
++	ui->actionNew->setIcon(QIcon{":/icons/document-new.png"});
++	ui->actionLevel->setIcon(QIcon{":/icons/toggle-underground.png"});
++	ui->actionPass->setIcon(QIcon{":/icons/toggle-pass.png"});
++	ui->actionCut->setIcon(QIcon{":/icons/edit-cut.png"});
++	ui->actionCopy->setIcon(QIcon{":/icons/edit-copy.png"});
++	ui->actionPaste->setIcon(QIcon{":/icons/edit-paste.png"});
++	ui->actionFill->setIcon(QIcon{":/icons/fill-obstacles.png"});
++	ui->actionGrid->setIcon(QIcon{":/icons/toggle-grid.png"});
++	ui->actionUndo->setIcon(QIcon{":/icons/edit-undo.png"});
++	ui->actionRedo->setIcon(QIcon{":/icons/edit-redo.png"});
++	ui->actionErase->setIcon(QIcon{":/icons/edit-clear.png"});
++	ui->actionTranslations->setIcon(QIcon{":/icons/translations.png"});
++	ui->actionLock->setIcon(QIcon{":/icons/lock-closed.png"});
++	ui->actionUnlock->setIcon(QIcon{":/icons/lock-open.png"});
++	ui->actionZoom_in->setIcon(QIcon{":/icons/zoom_plus.png"});
++	ui->actionZoom_out->setIcon(QIcon{":/icons/zoom_minus.png"});
++	ui->actionZoom_reset->setIcon(QIcon{":/icons/zoom_zero.png"});
+ 
+ 	loadUserSettings(); //For example window size
+ 	setTitle();
+
+From 958a2ef8359054b623cc9555093fe106b1d8e46d Mon Sep 17 00:00:00 2001
+From: gigas002 <gigas002@pm.me>
+Date: Wed, 5 Jun 2024 21:46:42 +0900
+Subject: [PATCH 4/7] Fix missing translations
+
+---
+ mapeditor/mainwindow.cpp | 22 +++++++---------------
+ 1 file changed, 7 insertions(+), 15 deletions(-)
+
+diff --git a/mapeditor/mainwindow.cpp b/mapeditor/mainwindow.cpp
+index 8b9bb8f533..821125d840 100644
+--- a/mapeditor/mainwindow.cpp
++++ b/mapeditor/mainwindow.cpp
+@@ -133,25 +133,17 @@ void MainWindow::parseCommandLine(ExtractionOptions & extractionOptions)
+ void MainWindow::loadTranslation()
+ {
+ #ifdef ENABLE_QT_TRANSLATIONS
+-	std::string translationFile = settings["general"]["language"].String() + ".qm";
++	const std::string translationFile = settings["general"]["language"].String() + ".qm";
++	logGlobal->info("Loading translation '%s'", translationFile);
+ 
+-	QVector<QString> searchPaths;
+-
+-	for(auto const & string : VCMIDirs::get().dataPaths())
+-		searchPaths.push_back(pathToQString(string / "mapeditor" / "translation" / translationFile));
+-	searchPaths.push_back(pathToQString(VCMIDirs::get().userDataPath() / "mapeditor" / "translation" / translationFile));
+-
+-	for(auto const & string : boost::adaptors::reverse(searchPaths))
++	if (!translator.load(QString{":/translation/%1"}.arg(translationFile.c_str())))
+ 	{
+-		if (translator.load(string))
+-		{
+-			if (!qApp->installTranslator(&translator))
+-				logGlobal->error("Failed to install translator");
+-			return;
+-		}
++		logGlobal->error("Failed to load translation");
++		return;
+ 	}
+ 
+-	logGlobal->error("Failed to find translation");
++	if (!qApp->installTranslator(&translator))
++		logGlobal->error("Failed to install translator");
+ #endif
+ }
+ 
+
+From 2f19133638e62c10b5fb506cec05f526c7da63b8 Mon Sep 17 00:00:00 2001
+From: gigas002 <gigas002@pm.me>
+Date: Thu, 6 Jun 2024 02:04:36 +0000
+Subject: [PATCH 5/7] Icons renaming refactoring
+
+---
+ mapeditor/CMakeLists.txt                      |   2 +-
+ .../icons/{brush-5.png => tool-area.png}      | Bin
+ .../icons/{brush-6.png => tool-fill.png}      | Bin
+ .../icons/{brush-3.png => tool-lasso.png}     | Bin
+ .../icons/{brush-7.png => tool-line.png}      | Bin
+ .../icons/{brush-0.png => tool-select.png}    | Bin
+ mapeditor/mainwindow.cpp                      |   9 +--
+ mapeditor/resources.qrc                       |  62 +++++++++---------
+ 8 files changed, 37 insertions(+), 36 deletions(-)
+ rename mapeditor/icons/{brush-5.png => tool-area.png} (100%)
+ rename mapeditor/icons/{brush-6.png => tool-fill.png} (100%)
+ rename mapeditor/icons/{brush-3.png => tool-lasso.png} (100%)
+ rename mapeditor/icons/{brush-7.png => tool-line.png} (100%)
+ rename mapeditor/icons/{brush-0.png => tool-select.png} (100%)
+
+diff --git a/mapeditor/CMakeLists.txt b/mapeditor/CMakeLists.txt
+index e405c030f3..d9ca52373c 100644
+--- a/mapeditor/CMakeLists.txt
++++ b/mapeditor/CMakeLists.txt
+@@ -226,7 +226,7 @@ if(NOT WIN32 AND NOT APPLE)
+ 	foreach(iconSize 32 48 64 128 256)
+ 		install(FILES "icons/mapeditor.${iconSize}x${iconSize}.png"
+ 			DESTINATION "share/icons/hicolor/${iconSize}x${iconSize}/apps"
+-			RENAME mapeditor.png
++			RENAME vcmieditor.png
+ 		)
+ 	endforeach()
+ 	install(FILES "vcmieditor.desktop" DESTINATION share/applications)
+diff --git a/mapeditor/icons/brush-5.png b/mapeditor/icons/tool-area.png
+similarity index 100%
+rename from mapeditor/icons/brush-5.png
+rename to mapeditor/icons/tool-area.png
+diff --git a/mapeditor/icons/brush-6.png b/mapeditor/icons/tool-fill.png
+similarity index 100%
+rename from mapeditor/icons/brush-6.png
+rename to mapeditor/icons/tool-fill.png
+diff --git a/mapeditor/icons/brush-3.png b/mapeditor/icons/tool-lasso.png
+similarity index 100%
+rename from mapeditor/icons/brush-3.png
+rename to mapeditor/icons/tool-lasso.png
+diff --git a/mapeditor/icons/brush-7.png b/mapeditor/icons/tool-line.png
+similarity index 100%
+rename from mapeditor/icons/brush-7.png
+rename to mapeditor/icons/tool-line.png
+diff --git a/mapeditor/icons/brush-0.png b/mapeditor/icons/tool-select.png
+similarity index 100%
+rename from mapeditor/icons/brush-0.png
+rename to mapeditor/icons/tool-select.png
+diff --git a/mapeditor/mainwindow.cpp b/mapeditor/mainwindow.cpp
+index 821125d840..a0084b1ef2 100644
+--- a/mapeditor/mainwindow.cpp
++++ b/mapeditor/mainwindow.cpp
+@@ -199,10 +199,11 @@ MainWindow::MainWindow(QWidget* parent) :
+ 	ui->toolBrush->setIcon(QIcon{":/icons/brush-1.png"});
+ 	ui->toolBrush2->setIcon(QIcon{":/icons/brush-2.png"});
+ 	ui->toolBrush4->setIcon(QIcon{":/icons/brush-4.png"});
+-	ui->toolLasso->setIcon(QIcon{":/icons/brush-3.png"});
+-	ui->toolLine->setIcon(QIcon{":/icons/brush-7.png"});
+-	ui->toolArea->setIcon(QIcon{":/icons/brush-5.png"});
+-	ui->toolFill->setIcon(QIcon{":/icons/brush-6.png"});
++	ui->toolLasso->setIcon(QIcon{":/icons/tool-lasso.png"});
++	ui->toolLine->setIcon(QIcon{":/icons/tool-line.png"});
++	ui->toolArea->setIcon(QIcon{":/icons/tool-area.png"});
++	ui->toolFill->setIcon(QIcon{":/icons/tool-fill.png"});
++	ui->toolSelect->setIcon(QIcon{":/icons/tool-select.png"});
+ 	ui->actionOpen->setIcon(QIcon{":/icons/document-open.png"});
+ 	ui->actionSave->setIcon(QIcon{":/icons/document-save.png"});
+ 	ui->actionNew->setIcon(QIcon{":/icons/document-new.png"});
+diff --git a/mapeditor/resources.qrc b/mapeditor/resources.qrc
+index 6542499685..873a211fca 100644
+--- a/mapeditor/resources.qrc
++++ b/mapeditor/resources.qrc
+@@ -1,45 +1,45 @@
+ <RCC>
+     <qresource prefix="/">
+-        <file>icons/toggle-grid.png</file>
+-        <file>icons/lock-open.png</file>
+-        <file>icons/brush-3.png</file>
+-        <file>icons/mod-download.png</file>
+-        <file>icons/toggle-pass.png</file>
+-        <file>icons/mapeditor.256x256.png</file>
+-        <file>icons/mapeditor.64x64.png</file>
+-        <file>icons/edit-clear.png</file>
+-        <file>icons/document-open.png</file>
+-        <file>icons/brush-5.png</file>
+-        <file>icons/document-new.png</file>
+-        <file>icons/mapeditor.128x128.png</file>
+-        <file>icons/lock-closed.png</file>
+-        <file>icons/toggle-underground.png</file>
+-        <file>icons/zoom_zero.png</file>
+         <file>icons/brush-1.png</file>
+-        <file>icons/edit-redo.png</file>
++        <file>icons/brush-2.png</file>
++        <file>icons/brush-4.png</file>
++        <file>icons/document-new.png</file>
++        <file>icons/document-open.png</file>
++        <file>icons/document-save.png</file>
++        <file>icons/edit-clear.png</file>
+         <file>icons/edit-copy.png</file>
++        <file>icons/edit-cut.png</file>
++        <file>icons/edit-paste.png</file>
++        <file>icons/edit-redo.png</file>
+         <file>icons/edit-undo.png</file>
++        <file>icons/fill-obstacles.png</file>
++        <file>icons/lock-closed.png</file>
++        <file>icons/lock-open.png</file>
+         <file>icons/mapeditor.32x32.png</file>
+-        <file>icons/brush-6.png</file>
+-        <file>icons/edit-cut.png</file>
++        <file>icons/mapeditor.48x48.png</file>
++        <file>icons/mapeditor.64x64.png</file>
++        <file>icons/mapeditor.128x128.png</file>
++        <file>icons/mapeditor.256x256.png</file>
++        <file>icons/menu-game.png</file>
++        <file>icons/menu-mods.png</file>
+         <file>icons/menu-settings.png</file>
+-        <file>icons/fill-obstacles.png</file>
+         <file>icons/mod-delete.png</file>
+-        <file>icons/mod-enabled.png</file>
+         <file>icons/mod-disabled.png</file>
+-        <file>icons/menu-game.png</file>
++        <file>icons/mod-download.png</file>
++        <file>icons/mod-enabled.png</file>
+         <file>icons/mod-update.png</file>
+-        <file>icons/brush-7.png</file>
+-        <file>icons/zoom_minus.png</file>
+-        <file>icons/zoom_base.png</file>
+-        <file>icons/menu-mods.png</file>
+-        <file>icons/edit-paste.png</file>
++        <file>icons/toggle-grid.png</file>
++        <file>icons/toggle-pass.png</file>
++        <file>icons/toggle-underground.png</file>
++        <file>icons/tool-area.png</file>
++        <file>icons/tool-fill.png</file>
++        <file>icons/tool-lasso.png</file>
++        <file>icons/tool-line.png</file>
++        <file>icons/tool-select.png</file>
+         <file>icons/translations.png</file>
++        <file>icons/zoom_base.png</file>
++        <file>icons/zoom_minus.png</file>
+         <file>icons/zoom_plus.png</file>
+-        <file>icons/brush-4.png</file>
+-        <file>icons/mapeditor.48x48.png</file>
+-        <file>icons/document-save.png</file>
+-        <file>icons/brush-2.png</file>
+-        <file>icons/brush-0.png</file>
++        <file>icons/zoom_zero.png</file>
+     </qresource>
+ </RCC>
+
+From c8aa8bb18d4a55a70e52a74f1318055f009a98a8 Mon Sep 17 00:00:00 2001
+From: gigas002 <gigas002@pm.me>
+Date: Thu, 6 Jun 2024 07:24:49 +0000
+Subject: [PATCH 6/7] Fix qt5 mapeditor build
+
+---
+ mapeditor/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/mapeditor/CMakeLists.txt b/mapeditor/CMakeLists.txt
+index d9ca52373c..3609906617 100644
+--- a/mapeditor/CMakeLists.txt
++++ b/mapeditor/CMakeLists.txt
+@@ -127,7 +127,7 @@ set(editor_TS
+ )
+ if(ENABLE_TRANSLATIONS)
+ 	if(TARGET Qt5::Core)
+-		set_source_files_properties(${editor_TS} PROPERTIES OUTPUT_LOCATION translation)
++		set_source_files_properties(${editor_TS} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/${translationsDir}")
+ 		qt5_add_translation(editor_QM ${editor_TS})
+ 
+ 		set(translationsResource "${CMAKE_CURRENT_BINARY_DIR}/translations.qrc")
+
+From 410ef23a49d27e08d53ca5bb4e0872e634536ea4 Mon Sep 17 00:00:00 2001
+From: gigas002 <gigas002@pm.me>
+Date: Thu, 6 Jun 2024 20:33:41 +0900
+Subject: [PATCH 7/7] Make translation directory before building the mapeditor
+
+---
+ mapeditor/CMakeLists.txt | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/mapeditor/CMakeLists.txt b/mapeditor/CMakeLists.txt
+index 3609906617..b1dc9b0e92 100644
+--- a/mapeditor/CMakeLists.txt
++++ b/mapeditor/CMakeLists.txt
+@@ -127,7 +127,8 @@ set(editor_TS
+ )
+ if(ENABLE_TRANSLATIONS)
+ 	if(TARGET Qt5::Core)
+-		set_source_files_properties(${editor_TS} PROPERTIES OUTPUT_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/${translationsDir}")
++		file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/${translationsDir}")
++		set_source_files_properties(${editor_TS} PROPERTIES OUTPUT_LOCATION "${translationsDir}")
+ 		qt5_add_translation(editor_QM ${editor_TS})
+ 
+ 		set(translationsResource "${CMAKE_CURRENT_BINARY_DIR}/translations.qrc")
