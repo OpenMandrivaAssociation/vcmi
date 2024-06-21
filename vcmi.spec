@@ -8,7 +8,7 @@
 
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
-Version:	1.5.2
+Version:	1.5.3
 Release:	1
 License:	GPLv2+
 Group:		Games/Strategy
@@ -18,24 +18,24 @@ Source0:	https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{ver
 Source1:	https://github.com/fuzzylite/fuzzylite/archive/9751a751a17c0682ed5d02e583c6a0cda8bc88e5.tar.gz
 Source2:	https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.tar.gz
 BuildRequires:	cmake
-BuildRequires:	qmake5
-#BuildRequires:	cmake(Qt6)
-#BuildRequires:	qmake-qt6
+#BuildRequires:	qmake5
+BuildRequires:	cmake(Qt6)
+BuildRequires:	qmake-qt6
 BuildRequires:	boost-devel
 BuildRequires:	pkgconfig(libavcodec)
 BuildRequires:	pkgconfig(libavformat)
 BuildRequires:	pkgconfig(libavutil)
 BuildRequires:	pkgconfig(libswscale)
-#BuildRequires:	qt6-qttools
-#BuildRequires: 	qt6-qttools-linguist
-#BuildRequires:	qt6-qtbase-theme-gtk3
-BuildRequires:  cmake(Qt5LinguistTools)
-BuildRequires:	cmake(Qt5DBus)
-BuildRequires: 	cmake(Qt5Core)
-BuildRequires: 	cmake(Qt5Gui)
-BuildRequires:	cmake(Qt5Network)
+BuildRequires:	qt6-qttools
+BuildRequires: 	qt6-qttools-linguist
+BuildRequires:	qt6-qtbase-theme-gtk3
+BuildRequires:  cmake(Qt6LinguistTools)
+BuildRequires:	cmake(Qt6DBus)
+BuildRequires: 	cmake(Qt6Core)
+BuildRequires: 	cmake(Qt6Gui)
+BuildRequires:	cmake(Qt6Network)
 #BuildRequires:	cmake(Qt5Tools)
-BuildRequires:	cmake(Qt5Widgets)
+BuildRequires:	cmake(Qt6Widgets)
 BuildRequires:	pkgconfig(sdl2)
 BuildRequires:	pkgconfig(SDL2_image)
 BuildRequires:	pkgconfig(SDL2_mixer)
