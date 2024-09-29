@@ -18,6 +18,8 @@ Source0:	https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{ver
 Source1:	https://github.com/fuzzylite/fuzzylite/archive/9751a751a17c0682ed5d02e583c6a0cda8bc88e5.tar.gz
 Source2:	https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.tar.gz
 #Patch0:		https://patch-diff.githubusercontent.com/raw/vcmi/vcmi/pull/4091.patch
+# Drop with 1.6 release
+Patch3:		fix-boost-1.86.0.patch
 BuildRequires:	cmake
 #BuildRequires:	qmake5
 BuildRequires:	cmake(Qt6)
