@@ -20,6 +20,7 @@ Source2:	https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a4
 #Patch0:		https://patch-diff.githubusercontent.com/raw/vcmi/vcmi/pull/4091.patch
 # Drop with 1.6 release
 Patch3:		fix-boost-1.86.0.patch
+Patch4:		fix-boost-1.87.0.patch
 BuildRequires:	cmake
 #BuildRequires:	qmake5
 BuildRequires:	cmake(Qt6)
