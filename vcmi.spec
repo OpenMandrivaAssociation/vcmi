@@ -44,7 +44,7 @@ BuildRequires:	cmake(Qt6Widgets)
 BuildRequires:	pkgconfig(sdl2)
 BuildRequires:	pkgconfig(SDL2_image)
 BuildRequires:	pkgconfig(SDL2_mixer)
-BuildRequires:	pkgconfig(SDL2_ttf)
+BuildRequires:	pkgconfig(SDL2_ttf) = 2.22.0
 BuildRequires:	pkgconfig(minizip)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(icu-uc)
