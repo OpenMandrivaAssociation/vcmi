@@ -1,13 +1,15 @@
-diff --git a/client/renderSDL/CTrueTypeFont.h b/client/renderSDL/CTrueTypeFont.h
-index 87a9ac484..da9e933ec 100644
---- a/client/renderSDL/CTrueTypeFont.h
-+++ b/client/renderSDL/CTrueTypeFont.h
-@@ -17,7 +17,7 @@ VCMI_LIB_NAMESPACE_END
-
+diff -uraN vcmi-1.6.2/client/renderSDL/CTrueTypeFont.h omv-vcmi-1.6.2/client/renderSDL/CTrueTypeFont.h
+--- vcmi-1.6.2/client/renderSDL/CTrueTypeFont.h	2025-01-04 15:57:47.000000000 +0100
++++ omv-vcmi-1.6.2/client/renderSDL/CTrueTypeFont.h	2025-01-05 18:12:21.297818062 +0100
+@@ -16,9 +16,9 @@
+ VCMI_LIB_NAMESPACE_END
+ 
  class CBitmapFont;
-+if SDL_TTF_VERSION <= 2.22
-using TTF_Font = struct _TTF_Font;
-+endif
-
+-
++#if SDL_TTF_VERSION <= 2.22
+ using TTF_Font = struct _TTF_Font;
+-
++#endif
  class CTrueTypeFont final : public IFont
  {
+ 	const std::pair<std::unique_ptr<ui8[]>, ui64> data;
