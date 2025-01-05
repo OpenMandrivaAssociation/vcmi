@@ -21,6 +21,8 @@ Source2:	https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a4
 # Drop with 1.6 release
 #Patch3:		fix-boost-1.86.0.patch
 #Patch4:		fix-boost-1.87.0.patch
+Patch5:		fix-sdl-ttf.patch
+
 BuildRequires:	cmake
 #BuildRequires:	qmake5
 BuildRequires:	cmake(Qt6)
@@ -44,7 +46,7 @@ BuildRequires:	cmake(Qt6Widgets)
 BuildRequires:	pkgconfig(sdl2)
 BuildRequires:	pkgconfig(SDL2_image)
 BuildRequires:	pkgconfig(SDL2_mixer)
-BuildRequires:	pkgconfig(SDL2_ttf) = 2.22.0
+BuildRequires:	pkgconfig(SDL2_ttf) = 2.24.0
 BuildRequires:	pkgconfig(minizip)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(icu-uc)
