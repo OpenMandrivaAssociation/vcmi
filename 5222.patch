@@ -1,0 +1,44 @@
+From 3db1a010805f91c550cdcb10d30756196b9c455c Mon Sep 17 00:00:00 2001
+From: Andrey Filipenkov <decapitator@ukr.net>
+Date: Tue, 7 Jan 2025 12:09:11 +0300
+Subject: [PATCH] use TTF_Font from SDL_ttf directly
+
+---
+ client/renderSDL/CTrueTypeFont.cpp | 2 --
+ client/renderSDL/CTrueTypeFont.h   | 4 ++--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/client/renderSDL/CTrueTypeFont.cpp b/client/renderSDL/CTrueTypeFont.cpp
+index 94faf6502aa..311ee7d48b6 100644
+--- a/client/renderSDL/CTrueTypeFont.cpp
++++ b/client/renderSDL/CTrueTypeFont.cpp
+@@ -20,8 +20,6 @@
+ #include "../../lib/filesystem/Filesystem.h"
+ #include "../../lib/texts/TextOperations.h"
+ 
+-#include <SDL_ttf.h>
+-
+ std::pair<std::unique_ptr<ui8[]>, ui64> CTrueTypeFont::loadData(const JsonNode & config)
+ {
+ 	std::string filename = "Data/" + config["file"].String();
+diff --git a/client/renderSDL/CTrueTypeFont.h b/client/renderSDL/CTrueTypeFont.h
+index 87a9ac48443..5062aa25339 100644
+--- a/client/renderSDL/CTrueTypeFont.h
++++ b/client/renderSDL/CTrueTypeFont.h
+@@ -11,14 +11,14 @@
+ 
+ #include "../render/IFont.h"
+ 
++#include <SDL_ttf.h>
++
+ VCMI_LIB_NAMESPACE_BEGIN
+ class JsonNode;
+ VCMI_LIB_NAMESPACE_END
+ 
+ class CBitmapFont;
+ 
+-using TTF_Font = struct _TTF_Font;
+-
+ class CTrueTypeFont final : public IFont
+ {
+ 	const std::pair<std::unique_ptr<ui8[]>, ui64> data;
