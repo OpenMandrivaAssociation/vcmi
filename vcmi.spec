@@ -15,7 +15,7 @@ Group:		Games/Strategy
 Url:		https://www.vcmi.eu/
 Source0:	https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{version}.tar.gz
 # git submodules
-Source1:	https://github.com/fuzzylite/fuzzylite/archive/9751a751a17c0682ed5d02e583c6a0cda8bc88e5.tar.gz
+Source1:	https://github.com/fuzzylite/fuzzylite/archive/fuzzylite-13b3122f5c353c0389ed4e66041d548c44ec9df6.tar.gz
 Source2:	https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.tar.gz
 #Patch0:		https://patch-diff.githubusercontent.com/raw/vcmi/vcmi/pull/4091.patch
 # Drop with 1.6 release
@@ -49,6 +49,7 @@ BuildRequires:	pkgconfig(minizip)
 BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(icu-uc)
 BuildRequires:	pkgconfig(tbb)
+BuildRequires:	%{_lib}tbbind
 # Lua or Luajit. Pick one. Currently only luajit compiles with VCMI.
 BuildRequires:	pkgconfig(luajit)
 #BuildRequires:	pkgconfig(lua)
