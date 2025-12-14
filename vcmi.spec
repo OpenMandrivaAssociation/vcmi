@@ -19,6 +19,7 @@ Source1:	https://github.com/fuzzylite/fuzzylite/archive/fuzzylite-13b3122f5c353c
 Source2:	https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.tar.gz
 Patch0:		boost-1.89.patch
 
+BuildRequires:	make
 BuildRequires:	cmake
 #BuildRequires:	qmake5
 BuildRequires:	cmake(Qt6)
