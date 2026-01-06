@@ -29,6 +29,7 @@ BuildRequires:	pkgconfig(libavformat)
 BuildRequires:	pkgconfig(libavutil)
 BuildRequires:	pkgconfig(libswscale)
 BuildRequires:	pkgconfig(libunwind-llvm)
+BuildRequires:	pkgconfig(libsquish)
 BuildRequires:	qt6-qttools
 BuildRequires: 	qt6-qttools-linguist
 BuildRequires:	qt6-qtbase-theme-gtk3
@@ -37,7 +38,7 @@ BuildRequires:	cmake(Qt6DBus)
 BuildRequires: 	cmake(Qt6Core)
 BuildRequires: 	cmake(Qt6Gui)
 BuildRequires:	cmake(Qt6Network)
-#BuildRequires:	cmake(Qt5Tools)
+BuildRequires:	cmake(Qt6Svg)
 BuildRequires:	cmake(Qt6Widgets)
 BuildRequires:	pkgconfig(sdl2)
 BuildRequires:	pkgconfig(SDL2_image)
