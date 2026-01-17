@@ -8,8 +8,8 @@
 
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
-Version:	1.6.8
-Release:	4
+Version:	1.7.1
+Release:	1
 License:	GPLv2+
 Group:		Games/Strategy
 Url:		https://www.vcmi.eu/
@@ -17,7 +17,6 @@ Source0:	https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{ver
 # git submodules
 Source1:	https://github.com/fuzzylite/fuzzylite/archive/fuzzylite-13b3122f5c353c0389ed4e66041d548c44ec9df6.tar.gz
 Source2:	https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.tar.gz
-Patch0:		boost-1.89.patch
 
 BuildRequires:	make
 BuildRequires:	cmake
@@ -30,6 +29,7 @@ BuildRequires:	pkgconfig(libavformat)
 BuildRequires:	pkgconfig(libavutil)
 BuildRequires:	pkgconfig(libswscale)
 BuildRequires:	pkgconfig(libunwind-llvm)
+BuildRequires:	pkgconfig(libsquish)
 BuildRequires:	qt6-qttools
 BuildRequires: 	qt6-qttools-linguist
 BuildRequires:	qt6-qtbase-theme-gtk3
@@ -38,8 +38,10 @@ BuildRequires:	cmake(Qt6DBus)
 BuildRequires: 	cmake(Qt6Core)
 BuildRequires: 	cmake(Qt6Gui)
 BuildRequires:	cmake(Qt6Network)
-#BuildRequires:	cmake(Qt5Tools)
+BuildRequires:	cmake(Qt6Svg)
+BuildRequires:	cmake(Qt6SvgWidgets)
 BuildRequires:	cmake(Qt6Widgets)
+BuildRequires:	cmake(Qt6Xml)
 BuildRequires:	pkgconfig(sdl2)
 BuildRequires:	pkgconfig(SDL2_image)
 BuildRequires:	pkgconfig(SDL2_mixer)
@@ -49,6 +51,7 @@ BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(icu-uc)
 BuildRequires:	pkgconfig(tbb)
 BuildRequires:	%{_lib}tbbind
+BuildRequires:	pkgconfig(libonnxruntime)
 # Lua or Luajit. Pick one. Currently only luajit compiles with VCMI.
 BuildRequires:	pkgconfig(luajit)
 #BuildRequires:	pkgconfig(lua)
