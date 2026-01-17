@@ -51,6 +51,7 @@ BuildRequires:	pkgconfig(zlib)
 BuildRequires:	pkgconfig(icu-uc)
 BuildRequires:	pkgconfig(tbb)
 BuildRequires:	%{_lib}tbbind
+BuildRequires:	pkgconfig(libonnxruntime)
 # Lua or Luajit. Pick one. Currently only luajit compiles with VCMI.
 BuildRequires:	pkgconfig(luajit)
 #BuildRequires:	pkgconfig(lua)
