@@ -24,6 +24,8 @@ BuildRequires:	cmake
 BuildRequires:	cmake(Qt6)
 BuildRequires:	qmake-qt6
 BuildRequires:	boost-devel
+BuildRequires:	glaze-devel
+BuildRequires:	pkgconfig(fmt)
 BuildRequires:	pkgconfig(libavcodec)
 BuildRequires:	pkgconfig(libavformat)
 BuildRequires:	pkgconfig(libavutil)
@@ -59,7 +61,6 @@ BuildRequires:	cmake(VulkanHeaders)
 BuildRequires:  pkgconfig(vulkan)
 BuildRequires:	pkgconfig(xkbcommon-x11)
 BuildRequires:	pkgconfig(xkbcommon)
-BuildRequires:	glaze-devel
 # For data extraction
 Requires:	unshield
 Requires:	innoextract
