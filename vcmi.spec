@@ -59,6 +59,7 @@ BuildRequires:	cmake(VulkanHeaders)
 BuildRequires:  pkgconfig(vulkan)
 BuildRequires:	pkgconfig(xkbcommon-x11)
 BuildRequires:	pkgconfig(xkbcommon)
+BuildRequires:	glaze-devel
 # For data extraction
 Requires:	unshield
 Requires:	innoextract
