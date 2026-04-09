@@ -17,6 +17,7 @@ Source0:	https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{ver
 # git submodules
 Source1:	https://github.com/fuzzylite/fuzzylite/archive/fuzzylite-13b3122f5c353c0389ed4e66041d548c44ec9df6.tar.gz
 Source2:	https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.tar.gz
+Source3:	https://github.com/EclipseMenu/discord-presence/archive/discord-presence-01b3ebc622c2ab5b110f6ac966b37a578c43f610.tar.gz
 
 BuildRequires:	make
 BuildRequires:	cmake
@@ -98,6 +99,12 @@ cd test
 rmdir googletest
 tar xf %{S:2}
 mv googletest-* googletest
+cd ..
+cd client
+cd lib
+rmdir discord-presence
+tar xf %{S:3}
+mv discord-presence-* discord-presence
 cd ..
 %autopatch -p1
 #sed -i 's!-Werror!!g' AI/FuzzyLite/fuzzylite/CMakeLists.txt
