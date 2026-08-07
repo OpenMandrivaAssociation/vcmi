@@ -8,8 +8,8 @@
 
 Summary:	Open-source reimplementation and extension of the Heroes III game engine
 Name:		vcmi
-Version:	1.7.3
-Release:	2
+Version:	1.7.4
+Release:	1
 License:	GPLv2+
 Group:		Games/Strategy
 Url:		https://www.vcmi.eu/
@@ -17,11 +17,10 @@ Source0:	https://github.com/vcmi/vcmi/archive/refs/tags/%{version}/%{name}-%{ver
 # git submodules
 Source1:	https://github.com/fuzzylite/fuzzylite/archive/fuzzylite-13b3122f5c353c0389ed4e66041d548c44ec9df6.tar.gz
 Source2:	https://github.com/google/googletest/archive/e2239ee6043f73722e7aa812a459f54a28552929.tar.gz
-Source3:	https://github.com/EclipseMenu/discord-presence/archive/discord-presence-01b3ebc622c2ab5b110f6ac966b37a578c43f610.tar.gz
+Source3:	https://github.com/EclipseMenu/discord-presence/archive/discord-presence-52501e140db1c18d9da37dff9a9529bc4a9943c2.tar.gz
 
 BuildRequires:	make
 BuildRequires:	cmake
-#BuildRequires:	qmake5
 BuildRequires:	cmake(Qt6)
 BuildRequires:	qmake-qt6
 BuildRequires:	boost-devel
