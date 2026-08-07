@@ -25,6 +25,7 @@ BuildRequires:	cmake(Qt6)
 BuildRequires:	qmake-qt6
 BuildRequires:	boost-devel
 BuildRequires:	glaze-devel
+BuildRequires:	gettext
 BuildRequires:	pkgconfig(fmt)
 BuildRequires:	pkgconfig(libavcodec)
 BuildRequires:	pkgconfig(libavformat)
