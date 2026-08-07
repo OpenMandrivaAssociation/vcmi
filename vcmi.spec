@@ -114,7 +114,8 @@ cd ..
 	-DLIB_DIR=%{_lib} \
 	-DCMAKE_INSTALL_LIBDIR=%{_libdir} \
  	-DENABLE_INNOEXTRACT=OFF \
-	-DCMAKE_SKIP_RPATH=OFF
+	-DCMAKE_SKIP_RPATH=OFF \
+	-DENABLE_DISCORD=OFF
 %make_build
 
 %install
